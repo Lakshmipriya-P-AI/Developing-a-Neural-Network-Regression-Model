@@ -26,3 +26,73 @@ Build your training and test set from the dataset, here we are making the neural
 6.Plot the performance plot
 
 7.Evaluate the model with the testing data.
+
+
+## PROGRAM:
+```
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
+
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+
+from google.colab import auth
+import gspread
+from google.auth import default
+
+auth.authenticate_user()
+creds, _ = default()
+gc = gspread.authorize(creds)
+
+worksheet = gc.open('DLExp1').sheet1
+data = worksheet.get_all_values()
+df = pd.DataFrame(data[1:], columns=data[0])
+df = df.astype({'Input':'float'})
+df = df.astype({'Output':'float'})
+df.head()
+
+X = df[['Input']].values
+y = df[['Output']].values
+X
+
+X_train,X_test,y_train,y_test = train_test_split(X,y,test_size = 0.33,random_state = 33)
+Scaler = MinMaxScaler()
+Scaler.fit(X_train)
+X_train1 = Scaler.transform(X_train)
+X_train1
+
+ai=Sequential([
+    Dense(8,activation='relu'),
+    Dense(9,activation='relu'),
+    Dense(1)
+])
+ai.compile(optimizer='rmsprop',loss='mse')
+ai.fit(X_train1,y_train,epochs=2000)
+ai.fit(X_train1,y_train,epochs=2000)
+
+## Plot the loss
+loss_df = pd.DataFrame(ai.history.history)
+loss_df.plot()
+
+## Evaluate the model
+X_test1 = Scaler.transform(X_test)
+ai.evaluate(X_test1,y_test)
+
+# Prediction
+X_n1 = [[30]]
+X_n1_1 = Scaler.transform(X_n1)
+ai.predict(X_n1_1)
+```
+## DATASET INFORMATION:
+![image](https://github.com/Lakshmipriya-P-AI/Developing-a-Neural-Network-Regression-Model/assets/93427923/37cc5a88-86ee-4232-8c45-2aa5e6b71757)
+
+## OUTPUT:
+# Training Loss Vs Iteration Plot:
+![image](https://github.com/Lakshmipriya-P-AI/Developing-a-Neural-Network-Regression-Model/assets/93427923/27e3312d-54d2-4f9a-b100-3efa10eb9a5b)
+## Test Data Root Mean Squared Error:
+![image](https://github.com/Lakshmipriya-P-AI/Developing-a-Neural-Network-Regression-Model/assets/93427923/5abcff6f-e9d4-450c-aadf-1951ea14f7d0)
+## New Sample Data Prediction:
+![image](https://github.com/Lakshmipriya-P-AI/Developing-a-Neural-Network-Regression-Model/assets/93427923/15c116bf-be11-4977-b17d-193e0404f836)
+## RESULT:
+Thus a neural network regression model for the given dataset is written and executed successfully.
